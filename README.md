@@ -90,15 +90,15 @@ python scripts/01_run_baseline.py
 
   * **Avaliar Modelo Base:**
     ```bash
-    python scripts/03_evaluate_sql.py --limit -1
+    python scripts/03_evaluate_sql.py 
     ```
   * **Avaliar Experimento 1:**
     ```bash
-    python scripts/03_evaluate_sql.py --adapter_path models/finetuning_results/lr_0.0002_max_steps_100/final_adapter --limit -1
+    python scripts/03_evaluate_sql.py --adapter_path models/finetuning_results/lr_0.0002_max_steps_100/final_adapter 
     ```
   * **Avaliar Experimento 2:**
     ```bash
-    python scripts/03_evaluate_sql.py --adapter_path models/finetuning_results/lr_0.0001_max_steps_100/final_adapter --limit -1
+    python scripts/03_evaluate_sql.py --adapter_path models/finetuning_results/lr_0.0001_max_steps_100/final_adapter 
     ```
 
 *(Opcional: use `--limit 50` para uma execução mais rápida de teste.)*

@@ -1,5 +1,3 @@
-# Em: scripts/model_utils.py
-
 import torch
 from transformers import (
     AutoModelForCausalLM,

@@ -1,1 +1,142 @@
-# llm-specialization-tradeoff
+# Análise Quantitativa do Trade-off entre Especialização e Generalização em LLMs
+
+## Visão Geral do Projeto
+
+Este repositório contém o código e os resultados do quarto trabalho prático para as disciplinas de Tópicos Especiais em Bancos de Dados (ICC220) e Tópicos Especiais em Recuperação de Informação (PPGINF528).
+
+[cite\_start]O projeto consiste em uma avaliação empírica do processo de *fine-tuning* em Modelos de Linguagem de Grande Porte (LLMs). [cite: 1] [cite\_start]O objetivo central é especializar um LLM para a tarefa de Text-to-SQL usando o dataset Spider e, simultaneamente, medir o impacto dessa especialização no conhecimento geral do modelo. [cite: 2, 3] [cite\_start]A análise quantifica o ganho de desempenho na tarefa-alvo e a perda de capacidade em tarefas de conhecimento geral (fenômeno conhecido como "esquecimento catastrófico"), utilizando o benchmark MMLU. [cite: 3, 6]
+
+### Informações da Disciplina
+
+  * [cite\_start]**Universidade:** Universidade Federal do Amazonas (UFAM) - Instituto de Computação (IComp) [cite: 1]
+  * **Cursos:**
+      * [cite\_start]ICC220 - Tópicos Especiais em Bancos de Dados (Graduação) [cite: 1]
+      * [cite\_start]PPGINF528 - Tópicos Especiais em Recuperação de Informação (Pós-Graduação) [cite: 1]
+  * [cite\_start]**Semestre:** 2025/01 [cite: 1]
+  * [cite\_start]**Professores:** André Carvalho e Altigran da Silva [cite: 1]
+
+-----
+
+## Como Configurar e Executar o Projeto
+
+Siga os passos abaixo para configurar o ambiente e reproduzir todos os resultados.
+
+### 1\. Clonar o Repositório
+
+```bash
+git clone https://github.com/Souzagui28/llm-specialization-tradeoff.git
+cd llm-specialization-tradeoff
+```
+
+### 2\. Criar o Ambiente Conda
+
+```bash
+# Crie um novo ambiente chamado 'icc220-tp4' com Python 3.10
+conda create --name icc220-tp4 python=3.10 -y
+
+# Ative o ambiente recém-criado
+conda activate icc220-tp4
+```
+
+### 3\. Instalar as Dependências
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4\. Baixar os Bancos de Dados do Spider
+
+A avaliação da métrica `ExecutionAccuracy` requer os arquivos de banco de dados `.sqlite` do Spider, que não são baixados pela biblioteca `datasets`.
+
+1.  Faça o download do arquivo `spider.zip` a partir do [site oficial do Spider](https://drive.google.com/file/d/1403EGqzIDoHMdQF4c9Bkyl7dZLZ5Wt6J/view).
+2.  Na raiz deste projeto, crie uma pasta chamada `spider_db`.
+3.  Descompacte o arquivo baixado e mova a pasta `database` que está dentro dele para dentro da pasta `spider_db`. A estrutura final deve ser `spider_db/database/`.
+
+### 5\. Autenticação no Hugging Face (Passo Crucial)
+
+[cite\_start]O modelo base `mistralai/Mistral-7B-Instruct-v0.3` é um "gated model" e requer autenticação. [cite: 9, 10]
+
+  * **No Site:** Vá para a [página do modelo](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3), faça login e aceite os termos de uso.
+  * **No Terminal:** Com o ambiente `conda` ativado, execute `huggingface-cli login` e insira um token de acesso que pode ser gerado em [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens).
+
+### 6\. Executando o Pipeline Experimental
+
+Os scripts devem ser executados em ordem. Todos os resultados são salvos em arquivos para análise posterior.
+
+#### Fase 1: Avaliação do Modelo Base (Text-to-SQL)
+
+[cite\_start]Este script avalia o modelo base (não treinado) no dataset Spider e salva os resultados em `resultados_baseline.jsonl`. [cite: 18]
+
+```bash
+python scripts/01_run_baseline.py
+```
+
+#### Fase 2: Fine-Tuning LoRA
+
+[cite\_start]Este script treina dois modelos com diferentes hiperparâmetros e salva os adaptadores LoRA em `models/finetuning_results/`. [cite: 25, 27]
+
+  * **Experimento 1:**
+    ```bash
+    python scripts/02_run_finetuning.py --learning_rate 2e-4
+    ```
+  * **Experimento 2:**
+    ```bash
+    python scripts/02_run_finetuning.py --learning_rate 1e-4
+    ```
+
+#### Fase 3: Avaliação de Desempenho na Tarefa-Alvo
+
+[cite\_start]Este script avalia a métrica `ExecutionAccuracy` para o modelo base e os dois modelos fine-tunados. [cite: 30]
+
+  * **Avaliar Modelo Base:**
+    ```bash
+    python scripts/03_evaluate_sql.py --limit -1
+    ```
+  * **Avaliar Experimento 1:**
+    ```bash
+    python scripts/03_evaluate_sql.py --adapter_path models/finetuning_results/lr_0.0002_max_steps_100/final_adapter --limit -1
+    ```
+  * **Avaliar Experimento 2:**
+    ```bash
+    python scripts/03_evaluate_sql.py --adapter_path models/finetuning_results/lr_0.0001_max_steps_100/final_adapter --limit -1
+    ```
+
+*(Opcional: use `--limit 50` para uma execução mais rápida de teste.)*
+
+#### Fase 4: Avaliação de Regressão de Capacidade (MMLU)
+
+[cite\_start]Este script avalia a performance em conhecimento geral no MMLU. [cite: 38]
+
+  * **Avaliar Modelo Base:**
+    ```bash
+    python scripts/04_evaluate_mmlu.py
+    ```
+  * **Avaliar Experimento 1:**
+    ```bash
+    python scripts/04_evaluate_mmlu.py --adapter_path models/finetuning_results/lr_0.0002_max_steps_100/final_adapter
+    ```
+  * **Avaliar Experimento 2:**
+    ```bash
+    python scripts/04_evaluate_mmlu.py --adapter_path models/finetuning_results/lr_0.0001_max_steps_100/final_adapter
+    ```
+
+-----
+
+## Estrutura do Repositório
+
+```
+.
+├── README.md               # Documentação do projeto.
+├── requirements.txt        # Lista de dependências Python.
+├── custom_metrics/         # Contém a métrica customizada para DeepEval.
+│   └── execution_accuracy.py
+├── scripts/                # Contém os scripts executáveis do pipeline.
+│   ├── 01_run_baseline.py    # Executa a avaliação do modelo base (Fase 1).
+│   ├── 02_run_finetuning.py  # Executa o fine-tuning LoRA (Fase 2).
+│   ├── 03_evaluate_sql.py    # Avalia a Execution Accuracy no Spider (Fase 3).
+│   ├── 04_evaluate_mmlu.py   # Avalia a acurácia no MMLU (Fase 4).
+│   └── model_utils.py        # Funções auxiliares para carregar modelos e gerar texto.
+├── models/                 # Diretório para salvar os adaptadores LoRA.
+└── spider_db/              # Contém os bancos de dados do dataset Spider.
+    └── database/
+```

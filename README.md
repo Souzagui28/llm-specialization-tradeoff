@@ -4,16 +4,16 @@
 
 Este repositório contém o código e os resultados do quarto trabalho prático para as disciplinas de Tópicos Especiais em Bancos de Dados (ICC220) e Tópicos Especiais em Recuperação de Informação (PPGINF528).
 
-[cite\_start]O projeto consiste em uma avaliação empírica do processo de *fine-tuning* em Modelos de Linguagem de Grande Porte (LLMs). [cite: 1] [cite\_start]O objetivo central é especializar um LLM para a tarefa de Text-to-SQL usando o dataset Spider e, simultaneamente, medir o impacto dessa especialização no conhecimento geral do modelo. [cite: 2, 3] [cite\_start]A análise quantifica o ganho de desempenho na tarefa-alvo e a perda de capacidade em tarefas de conhecimento geral (fenômeno conhecido como "esquecimento catastrófico"), utilizando o benchmark MMLU. [cite: 3, 6]
+O projeto consiste em uma avaliação empírica do processo de *fine-tuning* em Modelos de Linguagem de Grande Porte (LLMs). O objetivo central é especializar um LLM para a tarefa de Text-to-SQL usando o dataset Spider e, simultaneamente, medir o impacto dessa especialização no conhecimento geral do modelo.A análise quantifica o ganho de desempenho na tarefa-alvo e a perda de capacidade em tarefas de conhecimento geral (fenômeno conhecido como "esquecimento catastrófico"), utilizando o benchmark MMLU.
 
 ### Informações da Disciplina
 
-  * [cite\_start]**Universidade:** Universidade Federal do Amazonas (UFAM) - Instituto de Computação (IComp) [cite: 1]
+  * **Universidade:** Universidade Federal do Amazonas (UFAM) - Instituto de Computação (IComp)
   * **Cursos:**
-      * [cite\_start]ICC220 - Tópicos Especiais em Bancos de Dados (Graduação) [cite: 1]
-      * [cite\_start]PPGINF528 - Tópicos Especiais em Recuperação de Informação (Pós-Graduação) [cite: 1]
-  * [cite\_start]**Semestre:** 2025/01 [cite: 1]
-  * [cite\_start]**Professores:** André Carvalho e Altigran da Silva [cite: 1]
+      * ICC220 - Tópicos Especiais em Bancos de Dados (Graduação)
+      * PPGINF528 - Tópicos Especiais em Recuperação de Informação (Pós-Graduação)
+  * **Semestre:** 2025/01
+  * **Professores:** André Carvalho e Altigran da Silva 
 
 -----
 
@@ -54,7 +54,7 @@ A avaliação da métrica `ExecutionAccuracy` requer os arquivos de banco de dad
 
 ### 5\. Autenticação no Hugging Face (Passo Crucial)
 
-[cite\_start]O modelo base `mistralai/Mistral-7B-Instruct-v0.3` é um "gated model" e requer autenticação. [cite: 9, 10]
+O modelo base `mistralai/Mistral-7B-Instruct-v0.3` é um "gated model" e requer autenticação.
 
   * **No Site:** Vá para a [página do modelo](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3), faça login e aceite os termos de uso.
   * **No Terminal:** Com o ambiente `conda` ativado, execute `huggingface-cli login` e insira um token de acesso que pode ser gerado em [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens).
@@ -65,7 +65,7 @@ Os scripts devem ser executados em ordem. Todos os resultados são salvos em arq
 
 #### Fase 1: Avaliação do Modelo Base (Text-to-SQL)
 
-[cite\_start]Este script avalia o modelo base (não treinado) no dataset Spider e salva os resultados em `resultados_baseline.jsonl`. [cite: 18]
+Este script avalia o modelo base (não treinado) no dataset Spider e salva os resultados em `resultados_baseline.jsonl`.
 
 ```bash
 python scripts/01_run_baseline.py
@@ -73,7 +73,7 @@ python scripts/01_run_baseline.py
 
 #### Fase 2: Fine-Tuning LoRA
 
-[cite\_start]Este script treina dois modelos com diferentes hiperparâmetros e salva os adaptadores LoRA em `models/finetuning_results/`. [cite: 25, 27]
+Este script treina dois modelos com diferentes hiperparâmetros e salva os adaptadores LoRA em `models/finetuning_results/`.
 
   * **Experimento 1:**
     ```bash
@@ -86,7 +86,7 @@ python scripts/01_run_baseline.py
 
 #### Fase 3: Avaliação de Desempenho na Tarefa-Alvo
 
-[cite\_start]Este script avalia a métrica `ExecutionAccuracy` para o modelo base e os dois modelos fine-tunados. [cite: 30]
+Este script avalia a métrica `ExecutionAccuracy` para o modelo base e os dois modelos fine-tunados.
 
   * **Avaliar Modelo Base:**
     ```bash
@@ -105,7 +105,7 @@ python scripts/01_run_baseline.py
 
 #### Fase 4: Avaliação de Regressão de Capacidade (MMLU)
 
-[cite\_start]Este script avalia a performance em conhecimento geral no MMLU. [cite: 38]
+Este script avalia a performance em conhecimento geral no MMLU.
 
   * **Avaliar Modelo Base:**
     ```bash
